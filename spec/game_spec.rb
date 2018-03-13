@@ -1,7 +1,11 @@
 require 'game'
 
 describe Game do
-  subject { Game.new }
+  subject do 
+    game = Game.new
+    game.code_length = 6
+    game
+  end
 
   describe '#initialize' do
   end
@@ -98,21 +102,29 @@ describe Game do
   describe '#evaluate_guess' do
     context 'when input has wrong length' do
       it 'raises ArgumentError' do
-        subject.code_length = 6
-        expect { subject.evaluate_guess('rgrg') }.to raise_error(ArgumentError, "Guess should be #{code_length} characters long")
+        subject.code_length = 4
+        expect { subject.evaluate_guess('rgrgrr') }.to raise_error(ArgumentError, "Guess should be #{subject.code_length} characters long")
       end
 
       it 'raises ArgumentError' do
+        expect { subject.evaluate_guess('rgrg') }.to raise_error(ArgumentError, "Guess should be #{subject.code_length} characters long")
+      end
+
+      it 'raises ArgumentError' do
+        subject.code_length = 8
+        expect { subject.evaluate_guess('rgrg') }.to raise_error(ArgumentError, "Guess should be #{subject.code_length} characters long")
       end
     end
 
     context 'when input is alphanumeric' do
       it 'raises ArgumentError' do
+        expect { subject.evaluate_guess('123ABC') }.to raise_error(ArgumentError, "Guess cannot contain numbers")
       end
     end
 
     context 'when input a number' do
       it 'raises ArgumentError' do
+        expect { subject.evaluate_guess(253614) }.to raise_error(ArgumentError, "Guess cannot be a number")
       end
     end
 
