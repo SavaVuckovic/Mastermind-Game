@@ -1,7 +1,7 @@
 class Game
 
-  DEFAULT_MAX_TRIES = 11
-  DEFAULT_CODE_LENGTH = 5
+  DEFAULT_MAX_TRIES = 12
+  DEFAULT_CODE_LENGTH = 6
 
   attr_reader :code_length
   attr_reader :max_tries
@@ -9,16 +9,14 @@ class Game
   attr_reader :code
 
   def initialize
-    @attempts = 0
-    @max_tries = DEFAULT_MAX_TRIES
-    @code_length = DEFAULT_CODE_LENGTH
+    reset
   end
 
   def reset
-    generate_code
     @attempts = 0
     @max_tries = DEFAULT_MAX_TRIES
     @code_length = DEFAULT_CODE_LENGTH
+    generate_code
   end
 
   def max_tries=(tries)
@@ -49,6 +47,6 @@ class Game
 
   private
   def generate_code
-    @code = ""
+    @code = 'RGBOPWCY'.split('').shuffle.join('').slice(0, @code_length)
   end
 end

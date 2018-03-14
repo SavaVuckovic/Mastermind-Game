@@ -9,16 +9,9 @@ describe Game do
   let(:alphanumeric_guess) { "a1b2hg45".slice(0, Game::DEFAULT_CODE_LENGTH) }
 
   describe '#initialize' do
-    it 'initializes attempts' do 
-      expect(subject.attempts).to eq(0)
-    end
-
-    it 'initializes max_tries' do 
-      expect(subject.max_tries).to eq(Game::DEFAULT_MAX_TRIES)
-    end
-
-    it 'initializes code_length' do 
-      expect(subject.code_length).to eq(Game::DEFAULT_CODE_LENGTH)
+    it 'invokes reset' do 
+      expect(subject).to receive(:reset)
+      subject.send :initialize
     end
   end
 
@@ -190,6 +183,18 @@ describe Game do
         current_attempt_count = subject.attempts
         subject.evaluate_guess(valid_guess)
         expect(subject.attempts).to eq(current_attempt_count + 1)
+      end
+    end
+  end
+
+  describe '#code' do 
+    context 'when code is generated' do 
+      it 'returns correct length code' do 
+        expect(subject.code.length).to eq(subject.code_length)
+      end
+  
+      it 'returns code with correct colors' do 
+        expect(subject.code).to match(/^[RGBYWCPO]+$/i)
       end
     end
   end
