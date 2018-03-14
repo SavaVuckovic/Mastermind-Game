@@ -16,13 +16,33 @@ describe Game do
   describe '#game_over?' do
     context 'when maximum tries are reached' do
       it 'returns true' do
+        max = 6
+        subject.max_tries = max
+        max.times { subject.evaluate_guess('RRRRRR') }
+        expect(subject.game_over?).to eq(true)
       end
     end
 
     context 'when code is broken' do
+      it 'returns true' do 
+        code = 'RGWBYP'
+        allow(subject).to receive(:code).and_return(code)
+        subject.evaluate_guess(code)
+        expect(subject.game_over?).to eq(true)
+      end
     end
 
-    context 'when code isnt broken and there are tries left' do
+    context 'when code isn\'t broken and there are tries left' do
+      it 'returns false' do 
+        allow(subject).to receive(:code).and_return('RGPWBY')
+        subject.max_tries = 6
+
+        subject.evaluate_guess('RRRRRR')
+        expect(subject.game_over?).to eq(false)
+
+        subject.evaluate_guess('GGGGGG')
+        expect(subject.game_over?).to eq(false)
+      end
     end
   end
 
