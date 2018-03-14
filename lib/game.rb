@@ -1,11 +1,24 @@
 class Game
 
+  DEFAULT_MAX_TRIES = 11
+  DEFAULT_CODE_LENGTH = 5
+
   attr_reader :code_length
   attr_reader :max_tries
   attr_reader :attempts
+  attr_reader :code
 
-  def initialize 
+  def initialize
     @attempts = 0
+    @max_tries = DEFAULT_MAX_TRIES
+    @code_length = DEFAULT_CODE_LENGTH
+  end
+
+  def reset
+    generate_code
+    @attempts = 0
+    @max_tries = DEFAULT_MAX_TRIES
+    @code_length = DEFAULT_CODE_LENGTH
   end
 
   def max_tries=(tries)
@@ -27,6 +40,15 @@ class Game
     raise ArgumentError.new("Guess cannot contain invalid colors") unless guess =~ /^[RGBYWCPO]+$/i
 
     @attempts += 1
+    @last_guess = guess
   end
 
+  def game_over?
+    @attempts == max_tries || @last_guess == code
+  end
+
+  private
+  def generate_code
+    @code = ""
+  end
 end
