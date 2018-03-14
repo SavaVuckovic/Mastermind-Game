@@ -8,6 +8,9 @@ describe Game do
   end
 
   describe '#initialize' do
+    it 'initializes attempts' do 
+      expect(subject.attempts).to eq(0)
+    end
   end
 
   describe '#game_over?' do
@@ -100,7 +103,7 @@ describe Game do
   end
 
   describe '#evaluate_guess' do
-    context 'when input has wrong length' do
+    context 'when guess has wrong length' do
       it 'raises ArgumentError' do
         subject.code_length = 4
         expect { subject.evaluate_guess('rgrgrr') }.to raise_error(ArgumentError, "Guess should be #{subject.code_length} characters long")
@@ -116,30 +119,27 @@ describe Game do
       end
     end
 
-    context 'when input is alphanumeric' do
+    context 'when guess contains numbers' do
       it 'raises ArgumentError' do
         expect { subject.evaluate_guess('123ABC') }.to raise_error(ArgumentError, "Guess cannot contain numbers")
       end
-    end
 
-    context 'when input a number' do
       it 'raises ArgumentError' do
-        expect { subject.evaluate_guess(253614) }.to raise_error(ArgumentError, "Guess cannot be a number")
+        expect { subject.evaluate_guess(253614) }.to raise_error(ArgumentError, "Guess cannot contain numbers")
       end
     end
 
-    context 'when input has invalid colors' do
+    context 'when guess has invalid colors' do
       it 'raises ArgumentError' do
+        expect { subject.evaluate_guess('gypdmk') }.to raise_error(ArgumentError, "Guess cannot contain invalid colors")
       end
     end
 
-    context 'when input has lowercase characters' do
-      it 'raises ArgumentError' do
-      end
-    end
-
-    context 'when input is correct' do
+    context 'when guess is correct' do
       it 'increments attempt_count' do
+        current_attempt_count = subject.attempts
+        subject.evaluate_guess('RGBYWP')
+        expect(subject.attempts).to eq(current_attempt_count + 1)
       end
     end
   end
