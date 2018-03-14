@@ -9,11 +9,12 @@ class Game
   attr_reader :code
 
   def initialize
+    @attempts = []
     reset
   end
 
   def reset
-    @attempts = 0
+    @attempts.clear
     @max_tries = DEFAULT_MAX_TRIES
     @code_length = DEFAULT_CODE_LENGTH
     generate_code
@@ -37,13 +38,19 @@ class Game
     raise ArgumentError.new("Guess cannot contain numbers") if guess.to_s =~ /\d/
     raise ArgumentError.new("Guess cannot contain invalid colors") unless guess =~ /^[RGBYWCPO]+$/i
 
-    @attempts += 1
+    value = { colors: 0, positions: 0 }
+
+    @attempts << { guess: guess, feedback: value }
     @last_guess = guess
   end
 
   def game_over?
-    @attempts == max_tries || @last_guess == code
+    @attempts.length == max_tries || @last_guess == code
   end
+
+  # def last_feedback
+  #   { colors: 3 }
+  # end
 
   private
   def generate_code

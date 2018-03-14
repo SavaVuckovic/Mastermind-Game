@@ -32,7 +32,7 @@ describe Game do
 
       subject.reset
 
-      expect(subject.attempts).to eq(0)
+      expect(subject.attempts).to eq([])
      end
 
      it 'resets max_tries' do
@@ -180,9 +180,9 @@ describe Game do
 
     context 'when guess is correct' do
       it 'increments attempt_count' do
-        current_attempt_count = subject.attempts
+        current_attempt_count = subject.attempts.length
         subject.evaluate_guess(valid_guess)
-        expect(subject.attempts).to eq(current_attempt_count + 1)
+        expect(subject.attempts.length).to eq(current_attempt_count + 1)
       end
     end
   end
@@ -199,6 +199,16 @@ describe Game do
     end
   end
 
-  describe '#get_last_state' do
+  describe '#last_feedback' do
+    context 'when valid guess' do 
+      it 'returns truthy value' do 
+        expect(subject.last_feedback).to be_truthy
+      end
+
+      # it 'returns correctly structured value' do 
+      #   expect({ colors: 3 }).to have_attributes(colors: 3)
+        
+      # end
+    end
   end
 end
