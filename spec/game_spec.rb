@@ -2,6 +2,11 @@ require 'game'
 
 describe Game do
   subject { Game.new }
+  let(:valid_guess) { "RGBOPWCY".slice(0, Game::DEFAULT_CODE_LENGTH) }
+  let(:wrong_guess) { "RRRRRRRR".slice(0, Game::DEFAULT_CODE_LENGTH) }
+  let(:invalid_color_guess) { "QQQQQQQQ".slice(0, Game::DEFAULT_CODE_LENGTH) }
+  let(:numeric_guess) { "17283647".slice(0, Game::DEFAULT_CODE_LENGTH).to_i }
+  let(:alphanumeric_guess) { "a1b2hg45".slice(0, Game::DEFAULT_CODE_LENGTH) }
 
   describe '#initialize' do
     it 'initializes attempts' do 
@@ -29,8 +34,8 @@ describe Game do
     it 'resets attempts' do
       old_attempts = subject.attempts   
       
-      subject.evaluate_guess('RGBYWP')
-      subject.evaluate_guess('GRRRRR')
+      subject.evaluate_guess(valid_guess)
+      subject.evaluate_guess(valid_guess)
 
       subject.reset
 
@@ -59,14 +64,14 @@ describe Game do
   describe '#game_over?' do
     context 'when maximum tries are reached' do
       it 'returns true' do
-        subject.max_tries.times { subject.evaluate_guess('RRRRRR') }
+        subject.max_tries.times { subject.evaluate_guess(valid_guess) }
         expect(subject.game_over?).to eq(true)
       end
     end
 
     context 'when code is broken' do
       it 'returns true' do 
-        code = 'RGWBYP'
+        code = valid_guess
         allow(subject).to receive(:code).and_return(code)
         subject.evaluate_guess(code)
         expect(subject.game_over?).to eq(true)
@@ -75,12 +80,12 @@ describe Game do
 
     context 'when code isn\'t broken and there are tries left' do
       it 'returns false' do 
-        allow(subject).to receive(:code).and_return('RGPWBY')
+        allow(subject).to receive(:code).and_return(valid_guess)
         
-        subject.evaluate_guess('RRRRRR')
+        subject.evaluate_guess(wrong_guess)
         expect(subject.game_over?).to eq(false)
 
-        subject.evaluate_guess('GGGGGG')
+        subject.evaluate_guess(wrong_guess)
         expect(subject.game_over?).to eq(false)
       end
     end
@@ -153,6 +158,7 @@ describe Game do
       end
 
       it 'raises ArgumentError' do
+        subject.code_length = 6
         expect { subject.evaluate_guess('rgrg') }.to raise_error(ArgumentError, "Guess should be #{subject.code_length} characters long")
       end
 
@@ -164,34 +170,25 @@ describe Game do
 
     context 'when guess contains numbers' do
       it 'raises ArgumentError' do
-        guess = "a1b2hg45123gh"
-        guess.slice!(0, Game::DEFAULT_CODE_LENGTH)
-
-        expect { subject.evaluate_guess(guess) }.to raise_error(ArgumentError, "Guess cannot contain numbers")
+        expect { subject.evaluate_guess(alphanumeric_guess) }.to raise_error(ArgumentError, "Guess cannot contain numbers")
       end
 
       it 'raises ArgumentError' do
-        guess = 1234213421341234
-        guess.to_s.slice!(0, Game::DEFAULT_CODE_LENGTH).to_i
-
-        expect { subject.evaluate_guess(guess) }.to raise_error(ArgumentError, "Guess cannot contain numbers")
+        expect { subject.evaluate_guess(numeric_guess) }.to raise_error(ArgumentError, "Guess cannot contain numbers")
       end
     end
 
     context 'when guess has invalid colors' do
       
       it 'raises ArgumentError' do
-        guess = "qwgmklvxzdja"
-        guess.slice!(0, Game::DEFAULT_CODE_LENGTH)
-
-        expect { subject.evaluate_guess(guess) }.to raise_error(ArgumentError, "Guess cannot contain invalid colors")
+        expect { subject.evaluate_guess(invalid_color_guess) }.to raise_error(ArgumentError, "Guess cannot contain invalid colors")
       end
     end
 
     context 'when guess is correct' do
       it 'increments attempt_count' do
         current_attempt_count = subject.attempts
-        subject.evaluate_guess('RGBYWP')
+        subject.evaluate_guess(valid_guess)
         expect(subject.attempts).to eq(current_attempt_count + 1)
       end
     end
